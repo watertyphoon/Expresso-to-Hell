@@ -1,4 +1,4 @@
- 
+
 
 class Everything {
 	class Coord {
@@ -71,3 +71,4 @@ class Expresso_Shot extends Projectile {
 class Expresso_Machine extends Expresso_Shot {
 	protected Expresso_Shot expresso();
 }
+
