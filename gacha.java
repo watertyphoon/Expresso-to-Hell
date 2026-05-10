@@ -1,4 +1,4 @@
-import java.util.Scanner;
+/*import java.util.Scanner;
 import java.io.File;
 
 	class GachaGirl{
@@ -25,4 +25,4 @@ import java.io.File;
 		}	
 	};
 
-
+*/
