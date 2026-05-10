@@ -64,10 +64,10 @@ class Projectile extends Everything {
 
 class Expresso_Shot extends Projectile {
 	public Expresso_Shot() {
-		damage = 2;
+		super("Expresso Shot", 5, false, 2);
 	}
 }
 
 class Expresso_Machine extends Expresso_Shot {
-	protected Expresso_Shot expresso();
+	protected Expresso_Shot expresso;
 }
