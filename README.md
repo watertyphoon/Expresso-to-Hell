@@ -15,4 +15,4 @@ Giulliana
   - Animation for walk cycle
 
 Josh
-  - Write what you did here
+  - Started gacha code
