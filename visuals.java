@@ -9,10 +9,14 @@ import java.awt.FontMetrics;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
 
-public class visuals extends JPanel /*implements WindowListener, ActionListener*/ {
-	public Player player = new Player("Expresso", 1, false, "heart.png", 6000, 4500);  
+public class visuals extends JPanel implements KeyListener/*implements WindowListener, ActionListener*/ {
+	public Player player = new Player("Expresso", 25, false, "heart.png", 6000, 4500);  
 	
-
+	public visuals() {
+		this.setFocusable(true);
+		this.requestFocusInWindow();
+		this.addKeyListener(this);
+	}
 	//private final int BALL_COUNT = 10;
 	//private final ArrayList<Ball> balls = new ArrayList<>();
 	//private final Timer timer;
@@ -68,10 +72,10 @@ public class visuals extends JPanel /*implements WindowListener, ActionListener*
 		
 		Image img2 = Toolkit.getDefaultToolkit().getImage(player.sprite);
 		g2d.scale(0.2,0.2);
-		g2d.drawImage(img2, 6000, 4500, null);
-		player.x = 6000;
-		player.y = 4500;
-		player.set_velocity(10);
+		g2d.drawImage(img2, player.x, player.y, null);
+		//player.x = 6000;
+		//player.y = 4500;
+		//player.set_velocity(25);		
 	}	
 	/*public String getText() {
 		return text;
@@ -79,22 +83,26 @@ public class visuals extends JPanel /*implements WindowListener, ActionListener*
 	public void setText(String newText) {
 		this.text = newText;
 	}
-	//@Override 
+	@Override 
 	public void keyPressed(KeyEvent e) {
 		if(e.getKeyCode() == KeyEvent.VK_UP) {
-			player.y -= 5;
+			player.y -= player.get_velocity();
 		}
 		else if(e.getKeyCode() == KeyEvent.VK_DOWN) {
-			player.y += 5;
+			player.y += player.get_velocity();
 		}
 		else if(e.getKeyCode() == KeyEvent.VK_LEFT) {
-			player.x -= 5;
+			player.x -= player.get_velocity();
 		}
 		else if(e.getKeyCode() == KeyEvent.VK_RIGHT) {
-			player.x +=5;
+			player.x += player.get_velocity();
 		}
 		repaint();
 	}
+	@Override
+	public void keyReleased(KeyEvent e) {}
+	@Override
+	public void keyTyped(KeyEvent e) {}
 
 	/*Button b;
 	public visuals(String title) {
