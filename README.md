@@ -7,8 +7,9 @@ Haven
 Logan
   - Write what you did here
 
-Guilliana
-  - Write what you did here
+Giulliana
+  - Character design
+  - Animation for walk cycle
 
 Josh
   - Write what you did here
