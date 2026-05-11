@@ -5,8 +5,9 @@ Haven
   - full art for the character dialogue
 
 Logan
-  - Write what you did here
-
+  -  made a bunch of classes like the projectile class
+  - I also figured out movement
+  - helped with visuals a little bit
 Giulliana
   - Character design
   - Animation for walk cycle
