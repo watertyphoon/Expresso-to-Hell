@@ -6,8 +6,12 @@ import java.util.ArrayList;
 import java.util.Random;
 import java.awt.Font;
 import java.awt.FontMetrics;
+import java.awt.event.KeyEvent;
+import java.awt.event.KeyListener;
 
 public class visuals extends JPanel /*implements WindowListener, ActionListener*/ {
+	public Player player = new Player("Expresso", 1, false, "heart.png", 6000, 4500);  
+	
 
 	//private final int BALL_COUNT = 10;
 	//private final ArrayList<Ball> balls = new ArrayList<>();
@@ -53,13 +57,43 @@ public class visuals extends JPanel /*implements WindowListener, ActionListener*
 		g2d.setColor(Color.WHITE); //set color of text (also goes BEFORE you draw the text) 
 		g2d.scale(.9, .9); //sets scale of text 
 		g2d.drawString(text, 600f, 850f); //draws text on the screen 
+		g2d.setColor(new Color(128,0,128));
+		g2d.fillRect(520,745,10,300);//x,y,length of obj, height of obj
 
+		g2d.setColor(new Color(128,0,128));
+		g2d.fillRect(525,745,1400,10);//x,y,length of obj, height of obj
+
+		g2d.setColor(new Color(128,0,128));
+		g2d.fillRect(1923,745,10,300);//x,y,length of obj, height of obj
+		
+		Image img2 = Toolkit.getDefaultToolkit().getImage(player.sprite);
+		g2d.scale(0.2,0.2);
+		g2d.drawImage(img2, 6000, 4500, null);
+		player.x = 6000;
+		player.y = 4500;
+		player.set_velocity(10);
 	}	
 	/*public String getText() {
 		return text;
 	}*/
 	public void setText(String newText) {
 		this.text = newText;
+	}
+	//@Override 
+	public void keyPressed(KeyEvent e) {
+		if(e.getKeyCode() == KeyEvent.VK_UP) {
+			player.y -= 5;
+		}
+		else if(e.getKeyCode() == KeyEvent.VK_DOWN) {
+			player.y += 5;
+		}
+		else if(e.getKeyCode() == KeyEvent.VK_LEFT) {
+			player.x -= 5;
+		}
+		else if(e.getKeyCode() == KeyEvent.VK_RIGHT) {
+			player.x +=5;
+		}
+		repaint();
 	}
 
 	/*Button b;
@@ -71,18 +105,34 @@ public class visuals extends JPanel /*implements WindowListener, ActionListener*
 		add(b);
 		add(text);
 		b.addActionListener(this);
-	}
-	@Override
+	}*/
+
+	/*Action up = new AbstractAction() {
+		public void actionPerformed(ActionEvent e) {
+			Graphics2D g2d = (Graphics2D) g;
+			g2d.scale(0.2,0.2);
+			g2d.drawImage(img2, player.x, player.y - player.get_velocity(), null);
+		}
+	};
+	component.getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(KeyStroke.getKeyStroke("w"), "up");
+	component.getActionMap().put("up", up);*/
+	
+/*	@Override
 	public void actionPerformed(ActionEvent e) {
 		int width = getWidth();
 		int height = getHeight();
 
+		//Inputmap input = gamepanel.getInputMap(JPanel.WHEN_IN_FOCUSED_WINDOW);
+		//Actionmap act = gamepanel.getActionMap();
+		//input.put(KeyStroke.getKeyStroke("W"), "move_up");
+
 		public void actionPerformed(ActionEvent e) {
 			text.setText("hanging myself frong");
-        }
-*/
+        }*/
 		// Update positions and check for wall collisions
-		/*for (Ball ball : balls) {
+
+
+	/*	for (Ball ball : balls) {
 		  ball.x += ball.dx;
 		  ball.y += ball.dy;
 
@@ -98,11 +148,11 @@ public class visuals extends JPanel /*implements WindowListener, ActionListener*
 		// Correct position
 		ball.y = Math.max(ball.radius, Math.min(ball.y, height - ball.radius));
 		}
-		}*/
+	}
 
 		// Tell Swing to redraw the window
-		//repaint();
-	//}
+		repaint();
+}*/
 
 	// Simple container class for ball properties
 	public static void main(String[] args) {

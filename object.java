@@ -1,19 +1,20 @@
 
 
 class Everything {
-	class Coord {
+	//class Coord {
 		public int x = 0;
 		public int y = 0;
-	}
-	class Hitbox {
+	//}
+	//class Hitbox {
 		public int width = 0;
 		public int height = 0;
-	}
+	//}
 
-	Coord coord = new Coord();
+	//Coord coord = new Coord();
 	protected String name;
 	protected int velocity = 0;
 	protected boolean stationary = false;
+	public String sprite;
 
 	public void set_name(String s) {
 		name = s;
@@ -33,16 +34,27 @@ class Everything {
 	public boolean get_stationary() {
 		return stationary;
 	} 
-	public void set_coord (int x, int y) {
-		coord.x = x;
-		coord.y = y;
+	public void set_coord (int new_x, int new_y) {
+		x = new_x;
+		y = new_y;
 	}
 	//TODO: add all the thingies and stop being lazy and fix this one
 	public int get_x () {
-		return coord.x;
+		return x;
 	}
 	public int get_y () {
-		return coord.y;
+		return y;
+	}
+}
+
+class Player extends Everything {
+	public Player(String str, int v, boolean b, String rts, int new_x, int new_y) {
+		name = str;
+		velocity = v;
+		boolean stationary = b;
+		sprite = rts;
+		x = new_x;
+		y = new_y;
 	}
 }
 
