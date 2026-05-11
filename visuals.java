@@ -22,6 +22,7 @@ public class visuals extends JPanel implements KeyListener/*implements WindowLis
 	//private final Timer timer;
 	//kerney's Bouncing ball code 
 	public String text = "i hate periods";
+	public String eemage = "max performative(shrunk).png";
 	@Override
 	protected void paintComponent(Graphics g) {
 		super.paintComponent(g);
@@ -40,7 +41,7 @@ public class visuals extends JPanel implements KeyListener/*implements WindowLis
 		g2d.fillRect(0, 0, getWidth(), getHeight());
 
 		//start of my code
-		Image img1 = Toolkit.getDefaultToolkit().getImage("max performative.png"); //idk what all this does but you put the name of your image in here
+		Image img1 = Toolkit.getDefaultToolkit().getImage(eemage); //idk what all this does but you put the name of your image in here
 		g2d.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
 		g2d.setRenderingHint(RenderingHints.KEY_TEXT_ANTIALIASING, RenderingHints.VALUE_TEXT_ANTIALIAS_GASP);
 		g2d.setRenderingHint(RenderingHints.KEY_STROKE_CONTROL, RenderingHints.VALUE_STROKE_NORMALIZE);
@@ -83,6 +84,9 @@ public class visuals extends JPanel implements KeyListener/*implements WindowLis
 	public void setText(String newText) {
 		this.text = newText;
 	}
+	public void setImage(String newImage)  {
+		this.eemage = newImage;
+	}
 	@Override 
 	public void keyPressed(KeyEvent e) {
 		if(e.getKeyCode() == KeyEvent.VK_UP) {
@@ -96,6 +100,10 @@ public class visuals extends JPanel implements KeyListener/*implements WindowLis
 		}
 		else if(e.getKeyCode() == KeyEvent.VK_RIGHT) {
 			player.x += player.get_velocity();
+		}
+		else if (e.getKeyCode() == KeyEvent.VK_SPACE) {
+			setText("balls");
+			setImage("alysa liu(shrunk).png");
 		}
 		repaint();
 	}
