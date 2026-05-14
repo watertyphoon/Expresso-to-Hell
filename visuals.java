@@ -9,13 +9,22 @@ import java.awt.FontMetrics;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
 
-public class visuals extends JPanel implements KeyListener/*implements WindowListener, ActionListener*/ {
+public class visuals extends JPanel implements KeyListener/*implements WindowListener*/, ActionListener {
 	public Player player = new Player("Expresso", 25, false, "heart.png", 6000, 4500);  
-	
+	public boolean is_fighting = false;
+	public ArrayList<Projectile> enemy_projectiles = new ArrayList<>();
+	public ArrayList<Projectile> bullets = new ArrayList<>();
+	public Timer timer;
+
+	@Override
+	public void actionPerformed(ActionEvent e) {}
+
 	public visuals() {
 		this.setFocusable(true);
 		this.requestFocusInWindow();
 		this.addKeyListener(this);
+		timer = new Timer(16, this);
+        timer.start();
 	}
 	//private final int BALL_COUNT = 10;
 	//private final ArrayList<Ball> balls = new ArrayList<>();
@@ -62,21 +71,37 @@ public class visuals extends JPanel implements KeyListener/*implements WindowLis
 		g2d.setColor(Color.WHITE); //set color of text (also goes BEFORE you draw the text) 
 		g2d.scale(.9, .9); //sets scale of text 
 		g2d.drawString(text, 600f, 850f); //draws text on the screen 
-		g2d.setColor(new Color(128,0,128));
-		g2d.fillRect(520,745,10,300);//x,y,length of obj, height of obj
+		
+		//g2d.setColor(new Color(128,0,128));
+		//g2d.fillRect(520,745,10,300);//x,y,length of obj, height of obj
 
-		g2d.setColor(new Color(128,0,128));
+		/*g2d.setColor(new Color(128,0,128));
 		g2d.fillRect(525,745,1400,10);//x,y,length of obj, height of obj
 
 		g2d.setColor(new Color(128,0,128));
-		g2d.fillRect(1923,745,10,300);//x,y,length of obj, height of obj
+		g2d.fillRect(1923,745,10,300);//x,y,length of obj, height of obj*/
 		
 		Image img2 = Toolkit.getDefaultToolkit().getImage(player.sprite);
-		g2d.scale(0.2,0.2);
-		g2d.drawImage(img2, player.x, player.y, null);
+		Image boss = Toolkit.getDefaultToolkit().getImage("omniman.png");
+		Image bull = Toolkit.getDefaultToolkit().getImage("bullet.png");
+
+
 		//player.x = 6000;
 		//player.y = 4500;
 		//player.set_velocity(25);		
+		if(is_fighting) {
+			//removeAll();	
+			g2d.scale(0.2,0.2);
+			g2d.setColor(Color.DARK_GRAY);
+			g2d.fillRect(0,0,getWidth()*10,getHeight()*10);
+			g2d.drawImage(img2, player.x, player.y, null);
+			g2d.drawImage(boss, 6000, 0, null);
+			for(int i = 0; i < bullets.size(); i++) {
+				g2d.drawImage(bull, bullets.get(i).x, bullets.get(i).y, null);
+				bullets.get(i).x += bullets.get(i).get_velocity();
+				bullets.get(i).y += bullets.get(i).get_velocity();
+			}
+		}
 	}	
 	/*public String getText() {
 		return text;
@@ -89,21 +114,27 @@ public class visuals extends JPanel implements KeyListener/*implements WindowLis
 	}
 	@Override 
 	public void keyPressed(KeyEvent e) {
-		if(e.getKeyCode() == KeyEvent.VK_UP) {
-			player.y -= player.get_velocity();
+		if(is_fighting) {
+			if(e.getKeyCode() == KeyEvent.VK_UP) {
+				player.y -= player.get_velocity();
+			}
+			else if(e.getKeyCode() == KeyEvent.VK_DOWN) {
+				player.y += player.get_velocity();
+			}
+			else if(e.getKeyCode() == KeyEvent.VK_LEFT) {
+				player.x -= player.get_velocity();
+			}
+			else if(e.getKeyCode() == KeyEvent.VK_RIGHT) {
+				player.x += player.get_velocity();
+			}
+			else if(e.getKeyCode() == KeyEvent.VK_SPACE) {
+				bullets.add(new Projectile("bullet", 10, false, 2, (player.x), (player.y-5)));
+			}
 		}
-		else if(e.getKeyCode() == KeyEvent.VK_DOWN) {
-			player.y += player.get_velocity();
-		}
-		else if(e.getKeyCode() == KeyEvent.VK_LEFT) {
-			player.x -= player.get_velocity();
-		}
-		else if(e.getKeyCode() == KeyEvent.VK_RIGHT) {
-			player.x += player.get_velocity();
-		}
-		else if (e.getKeyCode() == KeyEvent.VK_SPACE) {
-			setText("balls");
-			setImage("alysa liu(shrunk).png");
+		else if (e.getKeyCode() == KeyEvent.VK_ENTER) {
+			//setText("balls");
+			//setImage("alysa liu(shrunk).png");
+				is_fighting = true;
 		}
 		repaint();
 	}
