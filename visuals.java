@@ -141,7 +141,7 @@ public class visuals extends JPanel implements KeyListener/*implements WindowLis
 		if(max) {
 			Image perf = Toolkit.getDefaultToolkit().getImage(eemage);
 			//g2d.scale(0.85,0.85);
-			g2d.drawImage(perf, 0, getHeight() - 1000, getWidth(), 800, null);
+			g2d.drawImage(perf, 0, getHeight() - 1000, getWidth(), 1000, null);
 			if(next_frame) {
 				setText(d.MaxPerf1.get(index));
 				if((index + 1) == d.MaxPerf1.size()) {
@@ -157,7 +157,7 @@ public class visuals extends JPanel implements KeyListener/*implements WindowLis
 		if(max2) {
 			Image perf = Toolkit.getDefaultToolkit().getImage(eemage);
 			//g2d.scale(0.85,0.85);
-			g2d.drawImage(perf, 0, getHeight() - 250, 150, 250, null);
+			g2d.drawImage(perf, 0, getHeight() - 1000, getWidth(), 1000, null);
 			if(next_frame) {
 				setText(d.MaxPerf1.get(index));
 				if((index + 1) == d.MaxPerf1.size()) {
