@@ -60,11 +60,13 @@ class Player extends Everything {
 
 class Projectile extends Everything {
 	protected int damage = 0;
-	public Projectile(String str, int v, boolean b, int d) {
+	public Projectile(String str, int v, boolean b, int d, int new_x, int new_y) {
 		name = str;
 		velocity = v;
 		stationary = b;
 		damage = d;
+		x = new_x;
+		y = new_y;
 	}
 	public void set_damage(int d) {
 		damage = d;
@@ -76,7 +78,7 @@ class Projectile extends Everything {
 
 class Expresso_Shot extends Projectile {
 	public Expresso_Shot() {
-		super("Expresso Shot", 5, false, 2);
+		super("Expresso Shot", 5, false, 2, 0, 0);
 	}
 }
 
