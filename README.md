@@ -1,12 +1,12 @@
 # Expresso-to-Hell
 Haven 
-  - some of the visuals code
-  - character design
-  - full art for the character dialogue
-  - started on the gacha code
+  - Some of the visuals code
+  - Character design
+  - Full art for the boss dialogue
+  - Did part of the gacha code
 
 Logan
-  -  made a bunch of classes like the projectile class
+  - Made a bunch of classes like the projectile class
   - I also figured out movement
   - helped with visuals a little bit
 
@@ -14,6 +14,8 @@ Logan
 Giulliana
   - Character design
   - Animation for walk cycle
+  - Dialongue art for the dateables
+  - Didn't make any commits but did a lot of work I promise
 
 Josh
   - Started gacha code
