@@ -17,7 +17,13 @@ public class visuals extends JPanel implements KeyListener/*implements WindowLis
 	public Timer timer;
 
 	@Override
-	public void actionPerformed(ActionEvent e) {}
+	public void actionPerformed(ActionEvent e) {
+			for(int i = 0; i < bullets.size(); i++) {
+				bullets.get(i).x += bullets.get(i).get_velocity();
+				bullets.get(i).y -= bullets.get(i).get_velocity();
+			}
+			repaint();
+	}
 
 	public visuals() {
 		this.setFocusable(true);
@@ -98,9 +104,11 @@ public class visuals extends JPanel implements KeyListener/*implements WindowLis
 			g2d.drawImage(boss, 6000, 0, null);
 			for(int i = 0; i < bullets.size(); i++) {
 				g2d.drawImage(bull, bullets.get(i).x, bullets.get(i).y, null);
-				bullets.get(i).x += bullets.get(i).get_velocity();
-				bullets.get(i).y += bullets.get(i).get_velocity();
 			}
+			/*for(int i = 0; i < bullets.size(); i++) {
+				bullets.get(i).x += bullets.get(i).get_velocity();
+				bullets.get(i).y -= bullets.get(i).get_velocity();
+			}*/
 		}
 	}	
 	/*public String getText() {
