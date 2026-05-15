@@ -15,6 +15,7 @@ class Everything {
 	protected int velocity = 0;
 	protected boolean stationary = false;
 	public String sprite;
+	public int hp = 0;
 
 	public void set_name(String s) {
 		name = s;
@@ -50,6 +51,7 @@ class Everything {
 class Player extends Everything {
 	public Player(String str, int v, boolean b, String rts, int new_x, int new_y) {
 		name = str;
+		hp = 5;
 		velocity = v;
 		boolean stationary = b;
 		sprite = rts;
