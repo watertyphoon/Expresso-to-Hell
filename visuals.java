@@ -14,9 +14,10 @@ import java.io.BufferedReader;
 import java.io.InputStreamReader;
 import java.io.IOException;
 import java.util.HashMap;
+import java.util.Random;
 
 public class visuals extends JPanel implements KeyListener/*implements WindowListener*/, ActionListener {
-	public Player player = new Player("Expresso", 25, false, "back stand.png", 6000, 4500);  
+	public Player player = new Player("Expresso", 30, false, "back stand.png", 6000, 2500);  
 	public boolean is_fighting = false;
 	public ArrayList<Projectile> enemy_projectiles = new ArrayList<>();
 	public ArrayList<Projectile> bullets = new ArrayList<>();
@@ -42,6 +43,8 @@ public class visuals extends JPanel implements KeyListener/*implements WindowLis
 	public int b_x = 6000;
 	public int b_y = 0;
 	public String b_sprite = "max p 1.png";
+	public int walker = 0;
+	public Random rand = new Random();
 
 	public Timer timer;
 
@@ -55,6 +58,10 @@ public class visuals extends JPanel implements KeyListener/*implements WindowLis
 
 				String line;
 				while((line = inbox.readLine()) != null) {
+					/*if(line == "think fast chucklenuts") {
+						Image foxy = Toolkit.getDefaultToolkit().getImage("download.jpeg");
+						g2d.drawImage(foxy, 0, 0, getWidth(), getHeight()); 
+					}*/
 					chat.add(line);
 					if(chat.size() > 5) {
 						chat.remove(0);
@@ -75,6 +82,13 @@ public class visuals extends JPanel implements KeyListener/*implements WindowLis
 				if(bullets.get(i).y == b_y && bullets.get(i).x == b_x) {
 					bullets.remove(i);
 					b_hp -= 1;
+				}
+			}
+			for(int i = 0; i < enemy_projectiles.size(); i++) {
+				enemy_projectiles.get(i).y += enemy_projectiles.get(i).get_velocity();
+				if(enemy_projectiles.get(i).y == player.y && enemy_projectiles.get(i).x == player.x) {
+					enemy_projectiles.remove(i);
+					player.hp -= 1;
 				}
 			}
 			repaint();
@@ -101,8 +115,8 @@ public class visuals extends JPanel implements KeyListener/*implements WindowLis
 		Image arena = Toolkit.getDefaultToolkit().getImage("arena.png");
 
 		// Draw background
-		g2d.setColor(Color.DARK_GRAY);
-		g2d.fillRect(0, 0, getWidth(), getHeight());
+		//g2d.setColor(Color.DARK_GRAY);
+		//g2d.fillRect(0, 0, getWidth(), getHeight());
 
 		//start of my code
 		//Image img1 = Toolkit.getDefaultToolkit().getImage(eemage); //idk what all this does but you put the name of your image in here
@@ -123,16 +137,32 @@ public class visuals extends JPanel implements KeyListener/*implements WindowLis
 		//protected String text = "i hate periods"; //sets the text 
 		//more font stuff
 		Image boss = Toolkit.getDefaultToolkit().getImage(b_sprite);
+		g2d.drawImage(rom_bg, 0, 0, getWidth(), getHeight(), null);
 		if(max) {
 			Image perf = Toolkit.getDefaultToolkit().getImage(eemage);
-			g2d.drawImage(rom_bg, 0, 0, getWidth(), getHeight(), null);
 			//g2d.scale(0.85,0.85);
-			g2d.drawImage(perf, 0, getHeight() - 250, 150, 250, null);
+			g2d.drawImage(perf, 0, getHeight() - 1000, getWidth(), 800, null);
 			if(next_frame) {
 				setText(d.MaxPerf1.get(index));
 				if((index + 1) == d.MaxPerf1.size()) {
 					is_fighting = true;
 					max = false;
+				}
+				else {
+					index += 1;
+					next_frame = false;
+				}
+			}
+		}
+		if(max2) {
+			Image perf = Toolkit.getDefaultToolkit().getImage(eemage);
+			//g2d.scale(0.85,0.85);
+			g2d.drawImage(perf, 0, getHeight() - 250, 150, 250, null);
+			if(next_frame) {
+				setText(d.MaxPerf1.get(index));
+				if((index + 1) == d.MaxPerf1.size()) {
+					lobby = true;
+					max2 = false;
 				}
 				else {
 					index += 1;
@@ -149,6 +179,7 @@ public class visuals extends JPanel implements KeyListener/*implements WindowLis
 		Image img2 = Toolkit.getDefaultToolkit().getImage(player.sprite);
 
 		Image bull = Toolkit.getDefaultToolkit().getImage("coffee bean.png");
+		Image miss = Toolkit.getDefaultToolkit().getImage("miss.png");
 		//g2d.drawImage(arena, (getWidth()/2), (getHeight()/2), null); 
 		if(is_fighting) {
 			g2d.scale(0.2,0.2);
@@ -203,18 +234,38 @@ public class visuals extends JPanel implements KeyListener/*implements WindowLis
 					left = false;
 				}
 			}
+			walker = rand.nextInt(15);
+			if(walker == 0) b_x += 15;
+			else if(walker == 14) b_x -= 15;
+			walker = rand.nextInt(60);
+			if(walker == 0) enemy_projectiles.add(new Projectile("missle", 15, false, 1, b_x, (b_y + 5)));
+			if(b_x > getWidth()) {
+				b_x -= 15;
+			}
+			if(b_x < 0) {
+				b_x += 15;
+			}
 			g2d.drawImage(boss, b_x, b_y, null);
 			for(int i = 0; i < bullets.size(); i++) {
 				g2d.drawImage(bull, bullets.get(i).x, bullets.get(i).y, null);
 			}
+			for(int i = 0; i < enemy_projectiles.size(); i++) {
+				g2d.drawImage(miss, enemy_projectiles.get(i).x, enemy_projectiles.get(i).y, null);
+			}
 		}
 		g2d.scale(1,1);
-		g2d.setFont(new Font("Arial", 0, 12));
+		g2d.setFont(new Font("Arial", 0, 18));
 		g2d.setColor(Color.BLUE);
-		g2d.drawString("Chat: ", 10, 20);
+		g2d.drawString("Chat: ", getWidth(), 5);
 
 		for(int i = 0; i < chat.size(); i++) {
-			g2d.drawString(chat.get(i), 10, 40 + (i * 20));
+			if(chat.get(i) == "think fast chucklenuts") {
+				Image foxy = Toolkit.getDefaultToolkit().getImage("download.jpeg");
+				g2d.drawImage(foxy, 0, 0, getWidth(), getHeight(),null); 
+				//Thread.sleep(15);
+				System.exit(0);
+			}
+			g2d.drawString(chat.get(i), getWidth(), 5);
 		}
 	}	
 
@@ -227,28 +278,28 @@ public class visuals extends JPanel implements KeyListener/*implements WindowLis
 	@Override 
 	public void keyPressed(KeyEvent e) {
 		if(is_fighting) {
-			if(e.getKeyCode() == KeyEvent.VK_UP) {
+			if(e.getKeyCode() == KeyEvent.VK_UP && player.y >= 0) {
 				player.y -= player.get_velocity();
 				up = true;
 				down = false;
 				right = false;
 				left = false;
 			}
-			else if(e.getKeyCode() == KeyEvent.VK_DOWN) {
+			else if(e.getKeyCode() == KeyEvent.VK_DOWN && player.y < 2500) {
 				player.y += player.get_velocity();
 				up = false;
 				down = true;
 				right = false;
 				left = false;
 			}
-			else if(e.getKeyCode() == KeyEvent.VK_LEFT) {
+			else if(e.getKeyCode() == KeyEvent.VK_LEFT && player.x >=0) {
 				player.x -= player.get_velocity();
 				up = false;
 				down = false;
 				right = false;
 				left = true;
 			}
-			else if(e.getKeyCode() == KeyEvent.VK_RIGHT) {
+			else if(e.getKeyCode() == KeyEvent.VK_RIGHT && player.x < 12000) {
 				player.x += player.get_velocity();
 				up = false;
 				down = false;
