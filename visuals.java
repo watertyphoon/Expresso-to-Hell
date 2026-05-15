@@ -8,14 +8,46 @@ import java.awt.Font;
 import java.awt.FontMetrics;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
+import java.net.Socket;
+import java.io.PrintWriter;
+import java.io.BufferedReader;
+import java.io.InputStreamReader;
+import java.io.IOException;
+import java.util.HashMap;
 
 public class visuals extends JPanel implements KeyListener/*implements WindowListener*/, ActionListener {
 	public Player player = new Player("Expresso", 25, false, "heart.png", 6000, 4500);  
 	public boolean is_fighting = false;
 	public ArrayList<Projectile> enemy_projectiles = new ArrayList<>();
 	public ArrayList<Projectile> bullets = new ArrayList<>();
+	//multiplayer variable
+	public ArrayList<String> chat = new ArrayList<>();
+	private PrintWriter message;
+	private String playername = "Player" + new Random().nextInt(100);
 
 	public Timer timer;
+
+	public void chit_chat() {
+		new Thread(() -> {
+			try {
+				Socket socket = new Socket("host", 6769);
+				message = new PrintWriter(socket.getOutputStream(), true);
+				BufferedReader inbox = new BufferedReader(new InputStreamReader(socket.getInputStream()));
+				message.println(playername);
+
+				String line;
+				while((line = inbox.readLine()) != null) {
+					chat.add(line);
+					if(chat.size() > 5) {
+						chat.remove(0);
+					}
+					repaint();
+				}
+			} catch (Exception e) {
+				System.out.println("Ya GOt tHe WroNg NuMBeR"); 
+			}
+		}).start();
+	}
 
 	@Override
 	public void actionPerformed(ActionEvent e) {
@@ -32,6 +64,7 @@ public class visuals extends JPanel implements KeyListener/*implements WindowLis
 		this.addKeyListener(this);
 		timer = new Timer(16, this);
         timer.start();
+		chit_chat();
 	}
 
 	public String text = "i hate periods";
@@ -72,7 +105,7 @@ public class visuals extends JPanel implements KeyListener/*implements WindowLis
 		
 		Image img2 = Toolkit.getDefaultToolkit().getImage(player.sprite);
 		Image boss = Toolkit.getDefaultToolkit().getImage("omniman.png");
-		Image bull = Toolkit.getDefaultToolkit().getImage("bullet.png");		
+		Image bull = Toolkit.getDefaultToolkit().getImage("bullet.png");
 		if(is_fighting) {
 			g2d.scale(0.2,0.2);
 			g2d.setColor(Color.DARK_GRAY);
@@ -82,6 +115,14 @@ public class visuals extends JPanel implements KeyListener/*implements WindowLis
 			for(int i = 0; i < bullets.size(); i++) {
 				g2d.drawImage(bull, bullets.get(i).x, bullets.get(i).y, null);
 			}
+		}
+		g2d.scale(1,1);
+		g2d.setFont(new Font("Arial", 0, 12));
+		g2d.setColor(Color.BLUE);
+		g2d.drawString("Chat: ", 10, 20);
+
+		for(int i = 0; i < chat.size(); i++) {
+			g2d.drawString(chat.get(i), 10, 40 + (i * 20));
 		}
 	}	
 
@@ -108,6 +149,12 @@ public class visuals extends JPanel implements KeyListener/*implements WindowLis
 			}
 			else if(e.getKeyCode() == KeyEvent.VK_SPACE) {
 				bullets.add(new Projectile("bullet", 10, false, 2, (player.x), (player.y-5)));
+			}
+		}
+		else if (e.getKeyCode() == KeyEvent.VK_T) {
+			String s = JOptionPane.showInputDialog(this, "{:");
+			if(s != null && message != null) {
+				message.println(s);
 			}
 		}
 		else if (e.getKeyCode() == KeyEvent.VK_ENTER) {
