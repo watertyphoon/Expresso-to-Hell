@@ -14,8 +14,8 @@ Logan
 Giulliana
   - Character design
   - Animation for walk cycle
-  - Dialongue art for the dateables
-  - Didn't make any commits but did a lot of work I promise
+  - Dialogue art for the dateables
+  - Didn't make any commits but did a lot of work I promise -Haven
 
 Josh
   - Started gacha code
