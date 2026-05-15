@@ -8,19 +8,88 @@ import java.awt.Font;
 import java.awt.FontMetrics;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
+import java.net.Socket;
+import java.io.PrintWriter;
+import java.io.BufferedReader;
+import java.io.InputStreamReader;
+import java.io.IOException;
+import java.util.HashMap;
+import java.util.Random;
 
 public class visuals extends JPanel implements KeyListener/*implements WindowListener*/, ActionListener {
-	public Player player = new Player("Expresso", 25, false, "heart.png", 6000, 4500);  
+	public Player player = new Player("Expresso", 30, false, "back stand.png", 6000, 2500);  
 	public boolean is_fighting = false;
 	public ArrayList<Projectile> enemy_projectiles = new ArrayList<>();
 	public ArrayList<Projectile> bullets = new ArrayList<>();
+	//multiplayer variable
+	public ArrayList<String> chat = new ArrayList<>();
+	public dialogue d = new dialogue();
+	private PrintWriter message;
+	private String playername = "Player" + new Random().nextInt(100);
+
+	public boolean right = false;
+	public boolean left = false;
+	public boolean up = true;
+	public boolean down = false;
+	public boolean next_frame = true;
+	public boolean max2 = false;
+
+	public boolean max = true;
+	public boolean crust = false;
+	public boolean lobby = false;
+
+	public int index = 0;
+	public int b_hp = 5;
+	public int b_x = 6000;
+	public int b_y = 0;
+	public String b_sprite = "max p 1.png";
+	public int walker = 0;
+	public Random rand = new Random();
+
 	public Timer timer;
+
+	public void chit_chat() {
+		new Thread(() -> {
+			try {
+				Socket socket = new Socket("host", 6769);
+				message = new PrintWriter(socket.getOutputStream(), true);
+				BufferedReader inbox = new BufferedReader(new InputStreamReader(socket.getInputStream()));
+				message.println(playername);
+
+				String line;
+				while((line = inbox.readLine()) != null) {
+					/*if(line == "think fast chucklenuts") {
+						Image foxy = Toolkit.getDefaultToolkit().getImage("download.jpeg");
+						g2d.drawImage(foxy, 0, 0, getWidth(), getHeight()); 
+					}*/
+					chat.add(line);
+					if(chat.size() > 5) {
+						chat.remove(0);
+					}
+					repaint();
+				}
+			} catch (Exception e) {
+				System.out.println("Ya GOt tHe WroNg NuMBeR"); 
+			}
+		}).start();
+	}
 
 	@Override
 	public void actionPerformed(ActionEvent e) {
 			for(int i = 0; i < bullets.size(); i++) {
-				bullets.get(i).x += bullets.get(i).get_velocity();
+				//bullets.get(i).x += bullets.get(i).get_velocity();
 				bullets.get(i).y -= bullets.get(i).get_velocity();
+				if(bullets.get(i).y == b_y && bullets.get(i).x == b_x) {
+					bullets.remove(i);
+					b_hp -= 1;
+				}
+			}
+			for(int i = 0; i < enemy_projectiles.size(); i++) {
+				enemy_projectiles.get(i).y += enemy_projectiles.get(i).get_velocity();
+				if(enemy_projectiles.get(i).y == player.y && enemy_projectiles.get(i).x == player.x) {
+					enemy_projectiles.remove(i);
+					player.hp -= 1;
+				}
 			}
 			repaint();
 	}
@@ -31,39 +100,34 @@ public class visuals extends JPanel implements KeyListener/*implements WindowLis
 		this.addKeyListener(this);
 		timer = new Timer(16, this);
         timer.start();
+		chit_chat();
 	}
-	//private final int BALL_COUNT = 10;
-	//private final ArrayList<Ball> balls = new ArrayList<>();
-	//private final Timer timer;
-	//kerney's Bouncing ball code 
+
 	public String text = "i hate periods";
 	public String eemage = "max performative(shrunk).png";
 	@Override
 	protected void paintComponent(Graphics g) {
 		super.paintComponent(g);
 		Graphics2D g2d = (Graphics2D) g;
-		/*public String getText() {
-		  return text;
-		}
-		public void setText(String newText) {
-		this.text = newText;
-		}*/
 		// Turn on anti-aliasing for smooth circles
 		g2d.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
+		Image rom_bg = Toolkit.getDefaultToolkit().getImage("bg.png");
+		Image arena = Toolkit.getDefaultToolkit().getImage("arena.png");
 
 		// Draw background
-		g2d.setColor(Color.DARK_GRAY);
-		g2d.fillRect(0, 0, getWidth(), getHeight());
+		//g2d.setColor(Color.DARK_GRAY);
+		//g2d.fillRect(0, 0, getWidth(), getHeight());
 
 		//start of my code
-		Image img1 = Toolkit.getDefaultToolkit().getImage(eemage); //idk what all this does but you put the name of your image in here
+		//Image img1 = Toolkit.getDefaultToolkit().getImage(eemage); //idk what all this does but you put the name of your image in here
+		
 		g2d.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
 		g2d.setRenderingHint(RenderingHints.KEY_TEXT_ANTIALIASING, RenderingHints.VALUE_TEXT_ANTIALIAS_GASP);
 		g2d.setRenderingHint(RenderingHints.KEY_STROKE_CONTROL, RenderingHints.VALUE_STROKE_NORMALIZE);
-		g2d.scale(0.85, 0.85); //this controls how big or small the image will be
+		//g2d.scale(0.85, 0.85); //this controls how big or small the image will be
 							   //its important to do scale() BEFORE drawing the image 
 							   //if you do it after it'll scale the next thing that gets drawn instead of the image 
-		g2d.drawImage(img1, 1, 1, null);
+		//g2d.drawImage(img1, 1, 1, null);
 		//font stuff
 		//i high key dont know what most of this does i got it off stack overflow
 		g2d.setFont(new Font("Arial", 0, 60));
@@ -71,49 +135,140 @@ public class visuals extends JPanel implements KeyListener/*implements WindowLis
 		//g2d.setRenderingHint(RenderingHints.KEY_TEXT_ANTIALIASING, RenderingHints.VALUE_TEXT_ANTIALIAS_GASP);
 		//g2d.setRenderingHint(RenderingHints.KEY_STROKE_CONTROL, RenderingHints.VALUE_STROKE_NORMALIZE);
 		//protected String text = "i hate periods"; //sets the text 
-		//more font stuff 
+		//more font stuff
+		Image boss = Toolkit.getDefaultToolkit().getImage(b_sprite);
+		g2d.drawImage(rom_bg, 0, 0, getWidth(), getHeight(), null);
+		if(max) {
+			Image perf = Toolkit.getDefaultToolkit().getImage(eemage);
+			//g2d.scale(0.85,0.85);
+			g2d.drawImage(perf, 0, getHeight() - 1000, getWidth(), 800, null);
+			if(next_frame) {
+				setText(d.MaxPerf1.get(index));
+				if((index + 1) == d.MaxPerf1.size()) {
+					is_fighting = true;
+					max = false;
+				}
+				else {
+					index += 1;
+					next_frame = false;
+				}
+			}
+		}
+		if(max2) {
+			Image perf = Toolkit.getDefaultToolkit().getImage(eemage);
+			//g2d.scale(0.85,0.85);
+			g2d.drawImage(perf, 0, getHeight() - 250, 150, 250, null);
+			if(next_frame) {
+				setText(d.MaxPerf1.get(index));
+				if((index + 1) == d.MaxPerf1.size()) {
+					lobby = true;
+					max2 = false;
+				}
+				else {
+					index += 1;
+					next_frame = false;
+				}
+			}
+		}
 		FontMetrics fm = new FontMetrics(g2d.getFont()) {};
 		g2d.translate((600 - g2d.getFontMetrics(g2d.getFont()).stringWidth(text)) / 2, (450 - fm.getHeight()) / 2); //you can play with these values to see what happens
 		g2d.setColor(Color.WHITE); //set color of text (also goes BEFORE you draw the text) 
 		g2d.scale(.9, .9); //sets scale of text 
 		g2d.drawString(text, 600f, 850f); //draws text on the screen 
 		
-		//g2d.setColor(new Color(128,0,128));
-		//g2d.fillRect(520,745,10,300);//x,y,length of obj, height of obj
-
-		/*g2d.setColor(new Color(128,0,128));
-		g2d.fillRect(525,745,1400,10);//x,y,length of obj, height of obj
-
-		g2d.setColor(new Color(128,0,128));
-		g2d.fillRect(1923,745,10,300);//x,y,length of obj, height of obj*/
-		
 		Image img2 = Toolkit.getDefaultToolkit().getImage(player.sprite);
-		Image boss = Toolkit.getDefaultToolkit().getImage("omniman.png");
-		Image bull = Toolkit.getDefaultToolkit().getImage("bullet.png");
 
-
-		//player.x = 6000;
-		//player.y = 4500;
-		//player.set_velocity(25);		
+		Image bull = Toolkit.getDefaultToolkit().getImage("coffee bean.png");
+		Image miss = Toolkit.getDefaultToolkit().getImage("miss.png");
+		//g2d.drawImage(arena, (getWidth()/2), (getHeight()/2), null); 
 		if(is_fighting) {
-			//removeAll();	
 			g2d.scale(0.2,0.2);
-			g2d.setColor(Color.DARK_GRAY);
-			g2d.fillRect(0,0,getWidth()*10,getHeight()*10);
+			//g2d.setColor(Color.DARK_GRAY);
+			//g2d.fillRect(0,0,getWidth()*10,getHeight()*10);
 			g2d.drawImage(img2, player.x, player.y, null);
-			g2d.drawImage(boss, 6000, 0, null);
+			if(up) {
+				if(player.sprite == "back stand.png") {
+					player.sprite = "back walk 1.png";
+					up = false;
+				}
+				else if(player.sprite == "back walk 1.png") {
+					player.sprite = "back walk 2.png";
+					up = false;
+				}
+				else {
+					player.sprite = "back stand.png";
+					up = false;
+				}
+			}
+			if(down) {
+				if(player.sprite == "front stand.png") {
+					player.sprite = "front walk 1.png";
+					down = false;
+				}
+				else if(player.sprite == "front walk 1.png") {
+					player.sprite = "front walk 2.png";
+					down = false;
+				}
+				else {
+					player.sprite = "front stand.png";
+					down = false;
+				}
+			}
+			if(right) {
+				if(player.sprite == "right_stand.png") {
+					player.sprite = "right_walk.png";
+					right = false;
+				}
+				else {
+					player.sprite = "right_stand.png";
+					right = false;
+				}
+			}
+			if(left) {
+				if(player.sprite == "side stand.png") {
+					player.sprite = "side walk 2.png";
+					left = false;
+				}
+				else {
+					player.sprite = "side stand.png";
+					left = false;
+				}
+			}
+			walker = rand.nextInt(15);
+			if(walker == 0) b_x += 15;
+			else if(walker == 14) b_x -= 15;
+			walker = rand.nextInt(60);
+			if(walker == 0) enemy_projectiles.add(new Projectile("missle", 15, false, 1, b_x, (b_y + 5)));
+			if(b_x > getWidth()) {
+				b_x -= 15;
+			}
+			if(b_x < 0) {
+				b_x += 15;
+			}
+			g2d.drawImage(boss, b_x, b_y, null);
 			for(int i = 0; i < bullets.size(); i++) {
 				g2d.drawImage(bull, bullets.get(i).x, bullets.get(i).y, null);
 			}
-			/*for(int i = 0; i < bullets.size(); i++) {
-				bullets.get(i).x += bullets.get(i).get_velocity();
-				bullets.get(i).y -= bullets.get(i).get_velocity();
-			}*/
+			for(int i = 0; i < enemy_projectiles.size(); i++) {
+				g2d.drawImage(miss, enemy_projectiles.get(i).x, enemy_projectiles.get(i).y, null);
+			}
+		}
+		g2d.scale(1,1);
+		g2d.setFont(new Font("Arial", 0, 18));
+		g2d.setColor(Color.BLUE);
+		g2d.drawString("Chat: ", getWidth(), 5);
+
+		for(int i = 0; i < chat.size(); i++) {
+			if(chat.get(i) == "think fast chucklenuts") {
+				Image foxy = Toolkit.getDefaultToolkit().getImage("download.jpeg");
+				g2d.drawImage(foxy, 0, 0, getWidth(), getHeight(),null); 
+				//Thread.sleep(15);
+				System.exit(0);
+			}
+			g2d.drawString(chat.get(i), getWidth(), 5);
 		}
 	}	
-	/*public String getText() {
-		return text;
-	}*/
+
 	public void setText(String newText) {
 		this.text = newText;
 	}
@@ -123,26 +278,52 @@ public class visuals extends JPanel implements KeyListener/*implements WindowLis
 	@Override 
 	public void keyPressed(KeyEvent e) {
 		if(is_fighting) {
-			if(e.getKeyCode() == KeyEvent.VK_UP) {
+			if(e.getKeyCode() == KeyEvent.VK_UP && player.y >= 0) {
 				player.y -= player.get_velocity();
+				up = true;
+				down = false;
+				right = false;
+				left = false;
 			}
-			else if(e.getKeyCode() == KeyEvent.VK_DOWN) {
+			else if(e.getKeyCode() == KeyEvent.VK_DOWN && player.y < 2500) {
 				player.y += player.get_velocity();
+				up = false;
+				down = true;
+				right = false;
+				left = false;
 			}
-			else if(e.getKeyCode() == KeyEvent.VK_LEFT) {
+			else if(e.getKeyCode() == KeyEvent.VK_LEFT && player.x >=0) {
 				player.x -= player.get_velocity();
+				up = false;
+				down = false;
+				right = false;
+				left = true;
 			}
-			else if(e.getKeyCode() == KeyEvent.VK_RIGHT) {
+			else if(e.getKeyCode() == KeyEvent.VK_RIGHT && player.x < 12000) {
 				player.x += player.get_velocity();
+				up = false;
+				down = false;
+				right = true;
+				left = false;
 			}
 			else if(e.getKeyCode() == KeyEvent.VK_SPACE) {
 				bullets.add(new Projectile("bullet", 10, false, 2, (player.x), (player.y-5)));
 			}
+			if(b_hp <= 0) {
+				if(max) {
+					max = false;
+					max2 = true;
+				}
+			}
+		}
+		else if (e.getKeyCode() == KeyEvent.VK_T) {
+			String s = JOptionPane.showInputDialog(this, "{:");
+			if(s != null && message != null) {
+				message.println(s);
+			}
 		}
 		else if (e.getKeyCode() == KeyEvent.VK_ENTER) {
-			//setText("balls");
-			//setImage("alysa liu(shrunk).png");
-				is_fighting = true;
+				next_frame = true;
 		}
 		repaint();
 	}
@@ -150,65 +331,6 @@ public class visuals extends JPanel implements KeyListener/*implements WindowLis
 	public void keyReleased(KeyEvent e) {}
 	@Override
 	public void keyTyped(KeyEvent e) {}
-
-	/*Button b;
-	public visuals(String title) {
-		super(title);
-		setLayout(new FlowLayout());
-		addWindowListener(this);
-		b = new Button("Click me");
-		add(b);
-		add(text);
-		b.addActionListener(this);
-	}*/
-
-	/*Action up = new AbstractAction() {
-		public void actionPerformed(ActionEvent e) {
-			Graphics2D g2d = (Graphics2D) g;
-			g2d.scale(0.2,0.2);
-			g2d.drawImage(img2, player.x, player.y - player.get_velocity(), null);
-		}
-	};
-	component.getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(KeyStroke.getKeyStroke("w"), "up");
-	component.getActionMap().put("up", up);*/
-	
-/*	@Override
-	public void actionPerformed(ActionEvent e) {
-		int width = getWidth();
-		int height = getHeight();
-
-		//Inputmap input = gamepanel.getInputMap(JPanel.WHEN_IN_FOCUSED_WINDOW);
-		//Actionmap act = gamepanel.getActionMap();
-		//input.put(KeyStroke.getKeyStroke("W"), "move_up");
-
-		public void actionPerformed(ActionEvent e) {
-			text.setText("hanging myself frong");
-        }*/
-		// Update positions and check for wall collisions
-
-
-	/*	for (Ball ball : balls) {
-		  ball.x += ball.dx;
-		  ball.y += ball.dy;
-
-		// X-axis collision
-		if (ball.x - ball.radius < 0 || ball.x + ball.radius > width) {
-		ball.dx = -ball.dx;
-		// Correct position so they don't get stuck in the wall
-		ball.x = Math.max(ball.radius, Math.min(ball.x, width - ball.radius));
-		}
-		// Y-axis collision
-		if (ball.y - ball.radius < 0 || ball.y + ball.radius > height) {
-		ball.dy = -ball.dy;
-		// Correct position
-		ball.y = Math.max(ball.radius, Math.min(ball.y, height - ball.radius));
-		}
-	}
-
-		// Tell Swing to redraw the window
-		repaint();
-}*/
-
 	// Simple container class for ball properties
 	public static void main(String[] args) {
 		// Ensure GUI creation is done on the Event Dispatch Thread
